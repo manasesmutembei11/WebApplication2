@@ -33,6 +33,8 @@ namespace WebApplication2.Models
 
         public PersonStatus Status { get; set; }
 
+        public string PaymentNumber { get; set; }
+
 
     }
 }

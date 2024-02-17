@@ -1,128 +1,279 @@
-﻿using System;
+﻿using MvcPaging;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication2.Data;
+using WebApplication2.DTOs;
 using WebApplication2.Models;
-
+using WebApplication2.Repository.IRepository;
+using WebApplication2.Service.IService;
 namespace WebApplication2.Controllers
 {
     public class PeopleController : Controller
     {
-        private WebApplication2Context db = new WebApplication2Context();
-
-        // GET: People
-        public ActionResult Index()
+        private readonly IPeopleRepository _repository;
+        private readonly IPesaPalService _pesaPalService;
+        private readonly IConfiguration _configuration;
+        public PeopleController(IPeopleRepository repository, IPesaPalService pesaPalService, IConfiguration configuration)
         {
-            return View(db.People.ToList());
+            _repository = repository;
+            _pesaPalService = pesaPalService;
+            _configuration = configuration;
         }
 
+
+
+        // GET: People
+        public async Task<ActionResult> Index(int? page)
+        {
+            var peopleList = await _repository.GetPeopleAsync();
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+
+
+            var pagedPeopleList = peopleList.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedPeopleList);
+
+            /*  page = page ?? 1;
+               int pageSize = 5
+               int currentPageIndex = page.HasValue ? page.Value - 1 : 0;
+               var pagedList = await _repository.GetPagedPeopleAsync(currentPageIndex, page.Value, pageSize);
+               return View(pagedList);
+            */
+        }
+
+        [HttpGet, ActionName("search")]
+        public async Task<ActionResult> SearchPeople(string searchString)
+        {
+            var person = string.IsNullOrEmpty(searchString)
+                ? await _repository.GetPeopleAsync()
+                : await _repository.SearchPeopleAsync(searchString);
+
+            return View(person);
+        }
+
+
+
         // GET: People/Details/5
-        public ActionResult Details(int? id)
+
+        public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return (ActionResult)HttpNotFound();
             }
-            People people = db.People.Find(id);
-            if (people == null)
+
+            var person = await _repository.GetPersonByIdAsync(id.Value);
+            if (person == null)
             {
-                return HttpNotFound();
+                return (ActionResult)HttpNotFound();
             }
-            return View(people);
+
+            return View(person);
         }
 
         // GET: People/Create
         public ActionResult Create()
         {
-            return View();
+            return (ActionResult)View();
         }
 
-        // POST: People/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Email,Phone,Country,DateOfBirth,Status")] People people)
+        public async Task<ActionResult> Create([Bind(Include = "Id,FirstName,LastName,Email,Phone,Country,DateOfBirth")] People person)
         {
             if (ModelState.IsValid)
             {
-                db.People.Add(people);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                await _repository.AddPersonAsync(person);
+                return (ActionResult)RedirectToAction(nameof(Index));
             }
-
-            return View(people);
+            return (ActionResult)View(person);
         }
 
+
+
         // GET: People/Edit/5
-        public ActionResult Edit(int? id)
+
+        public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return (ActionResult)HttpNotFound();
             }
-            People people = db.People.Find(id);
-            if (people == null)
+
+            var person = await _repository.GetPersonByIdAsync(id.Value);
+            if (person == null)
             {
-                return HttpNotFound();
+                return (ActionResult)HttpNotFound();
             }
-            return View(people);
+
+            return (ActionResult)View(person);
         }
 
-        // POST: People/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Email,Phone,Country,DateOfBirth,Status")] People people)
+        public async Task<ActionResult> Edit(int id, [Bind(Include = "Id,firstName,lastName,email,phone,country,dateOfBirth")] People person)
         {
+            if (id != person.Id)
+            {
+                return (ActionResult)HttpNotFound();
+            }
+
             if (ModelState.IsValid)
             {
-                db.Entry(people).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    await _repository.UpdatePersonAsync(person);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_repository.PersonExists(person.Id))
+                    {
+                        return HttpNotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return (ActionResult)RedirectToAction(nameof(Index));
             }
-            return View(people);
+            return View(person);
         }
 
         // GET: People/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return (ActionResult)HttpNotFound();
             }
-            People people = db.People.Find(id);
-            if (people == null)
+
+            var person = await _repository.GetPersonByIdAsync(id.Value);
+            if (person == null)
+            {
+                return (ActionResult)HttpNotFound();
+            }
+
+            return View(person);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            await _repository.DeletePersonAsync(id);
+            return (ActionResult)RedirectToAction(nameof(Index));
+        }
+
+        private bool PersonExists(int id)
+        {
+            return _repository.PersonExists(id);
+        }
+
+
+        public async Task<ActionResult> Payment(int? id)
+        {
+            string consumerKey = _configuration["AuthRequest:consumer_key"];
+            string consumerSecret = _configuration["AuthRequest:consumer_secret"];
+
+            if (id == null)
+            {
+                return (ActionResult)HttpNotFound();
+            }
+
+            var person = await _repository.GetPersonByIdAsync(id.Value);
+            if (person == null)
             {
                 return HttpNotFound();
             }
-            return View(people);
+            //Get token
+            var authResponse = await _pesaPalService.RequestTokenAsync(consumerKey, consumerSecret);
+            var token = authResponse.Token;
+
+            // Prepare request
+            var orderRequest = new SubmitOrderRequestDTO
+            {
+                Id = Guid.NewGuid().ToString(),
+                Currency = "KES",
+                Amount = 1.00f,
+                Description = "Payment for services",
+                CallbackUrl = $"https://localhost:7175/People/Success/{id}",
+                CancellationUrl = $"https://localhost:7175/People/Failed/{id}",
+                NotificationId = new Guid("2d4c9c87-3cec-4807-b31c-dd9f6b10f273"),
+                BillingAddress = new BillingAddressDTO { PhoneNumber = "0768802661", EmailAddress = "manasesmutembei11@gmail.com" }
+
+
+            };
+            //Submit request to paypal
+
+            var orderResponse = await _pesaPalService.SubmitOrderRequestAsync(token, orderRequest);
+
+            var paymentUrl = orderResponse.RedirectUrl;
+            person.PaymentNumber = orderResponse.OrderTrackingId;
+            ViewBag.PaymentUrl = paymentUrl;
+            return View();
+
         }
 
-        // POST: People/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+
+        public async Task<ActionResult> Success(int id, string orderTrackingId, string orderMerchantReference)
         {
-            People people = db.People.Find(id);
-            db.People.Remove(people);
-            db.SaveChanges();
+            string consumerKey = _configuration["AuthRequest:consumer_key"];
+            string consumerSecret = _configuration["AuthRequest:consumer_secret"];
+            // Get the person by id
+            var person = await _repository.GetPersonByIdAsync(id);
+            if (person == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Get the transaction status from PesaPal
+            var authResponse = await _pesaPalService.RequestTokenAsync(consumerKey, consumerSecret);
+            var token = authResponse.Token;
+            var transactionStatus = await _pesaPalService.GetTransactionStatusAsync(token, orderTrackingId);
+
+            // Check if payment status description is "COMPLETED"
+            if (transactionStatus.StatusCode == 0)
+            {
+                person.Status = PersonStatus.Invalid;
+            }
+
+            if (transactionStatus.StatusCode == 1)
+            {
+                person.Status = PersonStatus.Confirmed;
+            }
+
+            if (transactionStatus.StatusCode == 2)
+            {
+                person.Status = PersonStatus.Failed;
+            }
+            if (transactionStatus.StatusCode == 3)
+            {
+                person.Status = PersonStatus.Reversed;
+            }
+
+
+            person.PaymentNumber = orderTrackingId;
+            await _repository.UpdatePersonAsync(person);
+
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
+        public ActionResult Failed(Guid id)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
+            // Handle failed transaction
+            return RedirectToAction("Index");
         }
     }
 }
