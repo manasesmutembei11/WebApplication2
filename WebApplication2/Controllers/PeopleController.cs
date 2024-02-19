@@ -183,7 +183,7 @@ namespace WebApplication2.Controllers
         }
 
 
-        public async Task<ActionResult> Payment(int? id, string orderTrackingId)
+        public async Task<ActionResult> Payment(int? id)
         {
             string consumerKey = "qkio1BGGYAXTu2JOfm7XSXNruoZsrqEW";
             string consumerSecret = "osGQ364R49cXKeOYSpaOnT++rHs=";
@@ -223,31 +223,6 @@ namespace WebApplication2.Controllers
             var paymentUrl = orderResponse.RedirectUrl;
             person.PaymentNumber = orderResponse.OrderTrackingId;
             ViewBag.PaymentUrl = paymentUrl;
-
-            var transactionStatus = await _pesaPalService.GetTransactionStatusAsync(token, orderTrackingId);
-
-            // Check if payment status description is "COMPLETED"
-            if (transactionStatus.StatusCode == 0)
-            {
-                person.Status = PersonStatus.Invalid;
-            }
-
-            if (transactionStatus.StatusCode == 1)
-            {
-                person.Status = PersonStatus.Confirmed;
-            }
-
-            if (transactionStatus.StatusCode == 2)
-            {
-                person.Status = PersonStatus.Failed;
-            }
-            if (transactionStatus.StatusCode == 3)
-            {
-                person.Status = PersonStatus.Reversed;
-            }
-
-
-
 
             await _repository.UpdatePersonAsync(person);
             return View();
