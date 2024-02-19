@@ -187,6 +187,14 @@
     <Compile Include="Migrations\202402170833533_IncludedPaymentNumber.Designer.cs">
       <DependentUpon>202402170833533_IncludedPaymentNumber.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202402191317531_Withoutpersonstatus.cs" />
+    <Compile Include="Migrations\202402191317531_Withoutpersonstatus.Designer.cs">
+      <DependentUpon>202402191317531_Withoutpersonstatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202402191320579_Withpersonstatus.cs" />
+    <Compile Include="Migrations\202402191320579_Withpersonstatus.Designer.cs">
+      <DependentUpon>202402191320579_Withpersonstatus.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\People.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -292,6 +300,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202402170833533_IncludedPaymentNumber.resx">
       <DependentUpon>202402170833533_IncludedPaymentNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202402191317531_Withoutpersonstatus.resx">
+      <DependentUpon>202402191317531_Withoutpersonstatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202402191320579_Withpersonstatus.resx">
+      <DependentUpon>202402191320579_Withpersonstatus.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -183,7 +183,7 @@ namespace WebApplication2.Controllers
         }
 
 
-        public async Task<ActionResult> Payment(int? id)
+        public async Task<ActionResult> Payment(int? id, string orderTrackingId)
         {
             string consumerKey = "qkio1BGGYAXTu2JOfm7XSXNruoZsrqEW";
             string consumerSecret = "osGQ364R49cXKeOYSpaOnT++rHs=";
@@ -223,26 +223,7 @@ namespace WebApplication2.Controllers
             var paymentUrl = orderResponse.RedirectUrl;
             person.PaymentNumber = orderResponse.OrderTrackingId;
             ViewBag.PaymentUrl = paymentUrl;
-            await _repository.UpdatePersonAsync(person);
-            return View();
 
-        }
-
-
-        public async Task<ActionResult> Success(int id, string orderTrackingId, string orderMerchantReference)
-        {
-            string consumerKey = "qkio1BGGYAXTu2JOfm7XSXNruoZsrqEW";
-            string consumerSecret = "osGQ364R49cXKeOYSpaOnT++rHs=";
-            // Get the person by id
-            var person = await _repository.GetPersonByIdAsync(id);
-            if (person == null)
-            {
-                return HttpNotFound();
-            }
-
-            // Get the transaction status from PesaPal
-            var authResponse = await _pesaPalService.RequestTokenAsync(consumerKey, consumerSecret);
-            var token = authResponse.Token;
             var transactionStatus = await _pesaPalService.GetTransactionStatusAsync(token, orderTrackingId);
 
             // Check if payment status description is "COMPLETED"
@@ -266,13 +247,59 @@ namespace WebApplication2.Controllers
             }
 
 
-            return RedirectToAction("Index");
+
+
+            await _repository.UpdatePersonAsync(person);
+            return View();
+
         }
 
-        public ActionResult Failed(Guid id)
-        {
-            // Handle failed transaction
-            return RedirectToAction("Index");
-        }
+
+         public async Task<ActionResult> Success(int id, string orderTrackingId, string orderMerchantReference)
+         {
+             string consumerKey = "qkio1BGGYAXTu2JOfm7XSXNruoZsrqEW";
+             string consumerSecret = "osGQ364R49cXKeOYSpaOnT++rHs=";
+             // Get the person by id
+             var person = await _repository.GetPersonByIdAsync(id);
+             if (person == null)
+             {
+                 return HttpNotFound();
+             }
+
+             // Get the transaction status from PesaPal
+             var authResponse = await _pesaPalService.RequestTokenAsync(consumerKey, consumerSecret);
+             var token = authResponse.Token;
+             var transactionStatus = await _pesaPalService.GetTransactionStatusAsync(token, orderTrackingId);
+
+               // Check if payment status description is "COMPLETED"
+                if (transactionStatus.StatusCode == 0)
+                {
+                    person.Status = PersonStatus.Invalid;
+                }
+
+                if (transactionStatus.StatusCode == 1)
+                {
+                    person.Status = PersonStatus.Confirmed;
+                }
+
+                if (transactionStatus.StatusCode == 2)
+                {
+                    person.Status = PersonStatus.Failed;
+                }
+                if (transactionStatus.StatusCode == 3)
+                {
+                    person.Status = PersonStatus.Reversed;
+                }
+
+
+                return RedirectToAction("Index");
+            } 
+
+            public ActionResult Failed(Guid id)
+            {
+                // Handle failed transaction
+                return RedirectToAction("Index");
+            } 
     }
 }
+

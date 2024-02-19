@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication2.Models
 {
-    public enum PersonStatus
+  public enum PersonStatus
     {
         New = 0, Confirmed = 1, Invalid = 2, Failed = 3, Reversed = 4
-    }
+    } 
     public class People
     {
         public int Id { get; set; }
@@ -31,7 +31,7 @@ namespace WebApplication2.Models
         public string Country { get; set; }
         public DateTime DateOfBirth { get; set; }
 
-        public PersonStatus Status { get; set; }
+       public PersonStatus Status { get; set; }
 
         public string PaymentNumber { get; set; }
 
