@@ -209,8 +209,8 @@ namespace WebApplication2.Controllers
                 Currency = "KES",
                 Amount = 1.00f,
                 Description = "Payment for services",
-                CallbackUrl = $"https://localhost:7175/People/Success/{id}",
-                CancellationUrl = $"https://localhost:7175/People/Failed/{id}",
+                CallbackUrl = $"https://localhost:44382//People/Success/{id}",
+                CancellationUrl = $"https://localhost:44382//People/Failed/{id}",
                 NotificationId = new Guid("2d4c9c87-3cec-4807-b31c-dd9f6b10f273"),
                 BillingAddress = new BillingAddressDTO { PhoneNumber = "0768802661", EmailAddress = "manasesmutembei11@gmail.com" }
 
@@ -223,31 +223,6 @@ namespace WebApplication2.Controllers
             var paymentUrl = orderResponse.RedirectUrl;
             person.PaymentNumber = orderResponse.OrderTrackingId;
             ViewBag.PaymentUrl = paymentUrl;
-
-            var transactionStatus = await _pesaPalService.GetTransactionStatusAsync(token, orderTrackingId);
-
-            // Check if payment status description is "COMPLETED"
-            if (transactionStatus.StatusCode == 0)
-            {
-                person.Status = PersonStatus.Invalid;
-            }
-
-            if (transactionStatus.StatusCode == 1)
-            {
-                person.Status = PersonStatus.Confirmed;
-            }
-
-            if (transactionStatus.StatusCode == 2)
-            {
-                person.Status = PersonStatus.Failed;
-            }
-            if (transactionStatus.StatusCode == 3)
-            {
-                person.Status = PersonStatus.Reversed;
-            }
-
-
-
 
             await _repository.UpdatePersonAsync(person);
             return View();
@@ -291,11 +266,11 @@ namespace WebApplication2.Controllers
                     person.Status = PersonStatus.Reversed;
                 }
 
-
-                return RedirectToAction("Index");
+            await _repository.UpdatePersonAsync(person);
+            return RedirectToAction("Index");
             } 
 
-            public ActionResult Failed(Guid id)
+            public ActionResult Failed(int? id)
             {
                 // Handle failed transaction
                 return RedirectToAction("Index");
