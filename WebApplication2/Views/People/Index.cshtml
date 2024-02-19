@@ -1,69 +1,94 @@
-﻿@model IEnumerable<WebApplication2.Models.People>
+﻿@using MvcPaging;
+@using WebApplication2.Models;
+@model IPagedList<People>
 
-@{
+@{;
     ViewBag.Title = "Index";
 }
 
 <h2>Index</h2>
-
+<div>
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+
+<form asp-controller="People" asp-action="SearchPeople" method="Get">
+    <p>
+
+        Title: <input type="text" name="searchString" />
+        <input type="submit" value="Search" />
+
+    </p>
+</form>
+    </div>
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.FirstName)
+            FirstName
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.LastName)
+            LastName
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Email)
+            Email
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Phone)
+            Phone
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Country)
+            Country
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DateOfBirth)
+            DateOfBirth
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Status)
+            Status
+        </th>
+        <th>
+            PaymentNumber
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Phone)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Country)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateOfBirth)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Country)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfBirth)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentNumber)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id }) |
+                @Html.ActionLink("Pay", "Payment", new { id = item.Id })
+            </td>
+        </tr>
+    }
 
 </table>
+
+<div class="pager">
+    @Html.Pager(Model.PageSize,Model.PageNumber, Model.TotalItemCount)
+</div>

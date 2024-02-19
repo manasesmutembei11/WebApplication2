@@ -1,5 +1,6 @@
 ﻿using MvcPaging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -21,12 +22,10 @@ namespace WebApplication2.Controllers
     {
         private readonly IPeopleRepository _repository;
         private readonly IPesaPalService _pesaPalService;
-        private readonly IConfiguration _configuration;
-        public PeopleController(IPeopleRepository repository, IPesaPalService pesaPalService, IConfiguration configuration)
+        public PeopleController(IPeopleRepository repository, IPesaPalService pesaPalService)
         {
             _repository = repository;
             _pesaPalService = pesaPalService;
-            _configuration = configuration;
         }
 
 
@@ -36,11 +35,13 @@ namespace WebApplication2.Controllers
         {
             var peopleList = await _repository.GetPeopleAsync();
 
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
-
-
-            var pagedPeopleList = peopleList.ToPagedList(pageNumber, pageSize);
+            //int pageSize = 1;
+           // int pageNumber = (page ?? 1);
+           int DefaultPageSize = 3;
+            int currentPageIndex = page.HasValue ? page.Value - 1 : 0;
+           // int totalItemCount = peopleList.Count;
+            
+            var pagedPeopleList = peopleList.ToPagedList(currentPageIndex, DefaultPageSize);
 
             return View(pagedPeopleList);
 
@@ -52,7 +53,7 @@ namespace WebApplication2.Controllers
             */
         }
 
-        [HttpGet, ActionName("search")]
+        [HttpGet]
         public async Task<ActionResult> SearchPeople(string searchString)
         {
             var person = string.IsNullOrEmpty(searchString)
@@ -184,8 +185,8 @@ namespace WebApplication2.Controllers
 
         public async Task<ActionResult> Payment(int? id)
         {
-            string consumerKey = _configuration["AuthRequest:consumer_key"];
-            string consumerSecret = _configuration["AuthRequest:consumer_secret"];
+            string consumerKey = "qkio1BGGYAXTu2JOfm7XSXNruoZsrqEW";
+            string consumerSecret = "osGQ364R49cXKeOYSpaOnT++rHs=";
 
             if (id == null)
             {
@@ -222,6 +223,7 @@ namespace WebApplication2.Controllers
             var paymentUrl = orderResponse.RedirectUrl;
             person.PaymentNumber = orderResponse.OrderTrackingId;
             ViewBag.PaymentUrl = paymentUrl;
+            await _repository.UpdatePersonAsync(person);
             return View();
 
         }
@@ -229,8 +231,8 @@ namespace WebApplication2.Controllers
 
         public async Task<ActionResult> Success(int id, string orderTrackingId, string orderMerchantReference)
         {
-            string consumerKey = _configuration["AuthRequest:consumer_key"];
-            string consumerSecret = _configuration["AuthRequest:consumer_secret"];
+            string consumerKey = "qkio1BGGYAXTu2JOfm7XSXNruoZsrqEW";
+            string consumerSecret = "osGQ364R49cXKeOYSpaOnT++rHs=";
             // Get the person by id
             var person = await _repository.GetPersonByIdAsync(id);
             if (person == null)
@@ -263,9 +265,6 @@ namespace WebApplication2.Controllers
                 person.Status = PersonStatus.Reversed;
             }
 
-
-            person.PaymentNumber = orderTrackingId;
-            await _repository.UpdatePersonAsync(person);
 
             return RedirectToAction("Index");
         }

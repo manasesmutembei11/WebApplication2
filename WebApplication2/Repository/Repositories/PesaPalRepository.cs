@@ -29,7 +29,7 @@ namespace WebApplication2.Repository.Repositories
         {
             try
             {
-                var Url = "/pesapalv3/api/Auth/RequestToken";
+                var Url = "https://cybqa.pesapal.com/pesapalv3/api/Auth/RequestToken";
                 // Convert request object to JSON
                 var jsonRequest = JsonConvert.SerializeObject(request);
                 var requestContent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
@@ -61,7 +61,7 @@ namespace WebApplication2.Repository.Repositories
 
         public async Task<RegisterIPNResponseDTO> RegisterIPNUrlAsync(RegisterIPNRequestDTO request)
         {
-            var url = "/pesapalv3/api/URLSetup/RegisterIPN";
+            var url = "https://cybqa.pesapal.com/pesapalv3/api/URLSetup/RegisterIPN";
             var accessToken = "YOUR_ACCESS_TOKEN"; // Replace with actual access token
 
             try
@@ -93,7 +93,7 @@ namespace WebApplication2.Repository.Repositories
 
         public async Task<List<GetIPNListResponseDTO>> GetIPNListAsync(string accessToken)
         {
-            var url = "/pesapalv3/apiURLSetup/GetIpnList";
+            var url = "https://cybqa.pesapal.com/pesapalv3/apiURLSetup/GetIpnList";
 
             try
             {
@@ -124,7 +124,7 @@ namespace WebApplication2.Repository.Repositories
 
         public async Task<SubmitOrderResponseDTO> SubmitOrderRequestAsync(string accessToken, SubmitOrderRequestDTO request)
         {
-            var url = "/pesapalv3/api/Transactions/SubmitOrderRequest";
+            var url = "https://cybqa.pesapal.com/pesapalv3/api/Transactions/SubmitOrderRequest";
 
 
             try
@@ -160,7 +160,7 @@ namespace WebApplication2.Repository.Repositories
 
         public async Task<TransactionStatusDTO> GetTransactionStatusAsync(string accessToken, string orderTrackingId)
         {
-            var url = $"/pesapalv3/api/Transactions/GetTransactionStatus?orderTrackingId={orderTrackingId}";
+            var url = $"https://cybqa.pesapal.com/pesapalv3/api/Transactions/GetTransactionStatus?orderTrackingId={orderTrackingId}";
 
             try
             {

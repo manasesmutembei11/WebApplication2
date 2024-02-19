@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MvcPaging;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
@@ -21,29 +22,30 @@ namespace WebApplication2.Repository.Repositories
                 _context = context;
             }
 
-            /*  public async Task<PagedList<People>> GetPagedPeopleAsync(int offset, int page, int pageSize, CancellationToken cancellationToken = default(CancellationToken))
-               {
-                   cancellationToken.ThrowIfCancellationRequested();
+     /*   public async Task<PagedList<People>> GetPagedPeopleAsync(int offset, int page, int pageSize, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
 
 
-                   var query = _context.People.OrderBy(x => x.FirstName)
-                       .Select(p => p)
-                       .Skip(offset)
-                       .Take(pageSize);
-                   var result = new PagedList<People>
-                   {
-                       TotalItemCount = await _context.People.CountAsync(),
-                       PageNumber = page,
-                       PageSize = pageSize,
-                       Source = await query.ToListAsync()
-                   };
+                var query = _context.People.OrderBy(x => x.FirstName)
+                    .Select(p => p)
+                    .Skip(offset) 
+                    .Take(pageSize);
+                var result = new PagedList<People>();
+                {
+                    TotalItemCount = await _context.People.CountAsync(),
+                    PageNumber = page,
+                    PageSize = pageSize,
+                    Source = await query.ToListAsync()
+                };
 
 
-                   return result; 
-               } */
+                return result; 
+            } */
 
             public async Task<List<People>> GetPeopleAsync()
             {
+              
                 return await _context.People.ToListAsync();
             }
             public async Task<List<People>> SearchPeopleAsync(string searchString)
