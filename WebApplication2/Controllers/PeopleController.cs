@@ -53,7 +53,7 @@ namespace WebApplication2.Controllers
             */
         }
 
-        [HttpGet]
+       [HttpGet, ActionName("SearchPeople")]
         public async Task<ActionResult> SearchPeople(string searchString)
         {
             var person = string.IsNullOrEmpty(searchString)

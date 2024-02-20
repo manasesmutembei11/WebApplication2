@@ -1,6 +1,7 @@
 ﻿@using MvcPaging;
 @using WebApplication2.Models;
-@model IPagedList<People>
+@using WebApplication2.Controllers
+@model PagedList<People>
 
 @{;
     ViewBag.Title = "Index";
@@ -8,19 +9,18 @@
 
 <h2>Index</h2>
 <div>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-
-<form asp-controller="People" asp-action="SearchPeople" method="Get">
     <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+</div>
 
+<form asp-controller="People" asp-action="SearchPeople" method="get">
+    <p>
         Title: <input type="text" name="searchString" />
         <input type="submit" value="Search" />
-
     </p>
 </form>
-    </div>
+
 
 <table class="table">
     <tr>
