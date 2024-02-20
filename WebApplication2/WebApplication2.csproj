@@ -179,21 +179,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202402162325281_InitialCreate.cs" />
-    <Compile Include="Migrations\202402162325281_InitialCreate.Designer.cs">
-      <DependentUpon>202402162325281_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202402170833533_IncludedPaymentNumber.cs" />
-    <Compile Include="Migrations\202402170833533_IncludedPaymentNumber.Designer.cs">
-      <DependentUpon>202402170833533_IncludedPaymentNumber.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202402191317531_Withoutpersonstatus.cs" />
-    <Compile Include="Migrations\202402191317531_Withoutpersonstatus.Designer.cs">
-      <DependentUpon>202402191317531_Withoutpersonstatus.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202402191320579_Withpersonstatus.cs" />
-    <Compile Include="Migrations\202402191320579_Withpersonstatus.Designer.cs">
-      <DependentUpon>202402191320579_Withpersonstatus.cs</DependentUpon>
+    <Compile Include="Migrations\202402200637303_InitialCreate.cs" />
+    <Compile Include="Migrations\202402200637303_InitialCreate.Designer.cs">
+      <DependentUpon>202402200637303_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\People.cs" />
@@ -295,17 +283,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202402162325281_InitialCreate.resx">
-      <DependentUpon>202402162325281_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202402170833533_IncludedPaymentNumber.resx">
-      <DependentUpon>202402170833533_IncludedPaymentNumber.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202402191317531_Withoutpersonstatus.resx">
-      <DependentUpon>202402191317531_Withoutpersonstatus.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202402191320579_Withpersonstatus.resx">
-      <DependentUpon>202402191320579_Withpersonstatus.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202402200637303_InitialCreate.resx">
+      <DependentUpon>202402200637303_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

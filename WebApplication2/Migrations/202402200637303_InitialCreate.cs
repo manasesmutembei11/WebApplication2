@@ -19,6 +19,7 @@
                         Country = c.String(nullable: false),
                         DateOfBirth = c.DateTime(nullable: false),
                         Status = c.Int(nullable: false),
+                        PaymentNumber = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
