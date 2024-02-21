@@ -251,6 +251,8 @@
     <Content Include="Views\People\Index.cshtml" />
     <Content Include="Views\People\Payment.cshtml" />
     <Content Include="Views\People\SearchPeople.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Bootstrap4Pagination.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Bootstrap5Pagination.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

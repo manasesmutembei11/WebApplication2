@@ -1,0 +1,38 @@
+﻿@model PaginationModel
+@{
+    ViewBag.Title = "Bootstrap5Pagination";
+}
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        @foreach (var link in Model.PaginationLinks)
+        {
+            <li class="page-item @(link.IsCurrent ? "active" : "") @(link.Active ? "" : "disabled")">
+                @{
+                    var attributes = new Dictionary<string, object>();
+                    if (link.Url == null && Model.AjaxOptions != null)
+                    {
+                        foreach (var ajaxOption in Model.AjaxOptions.ToUnobtrusiveHtmlAttributes())
+                        {
+                            attributes.Add(ajaxOption.Key, ajaxOption.Value.ToString());
+                        }
+                    }
+                }
+                <a class="page-link" href="@(link.Url ?? "#")" @(attributes)>
+                    @if (link.DisplayText == "«")
+                    {
+                        <span aria-hidden="true">&laquo;</span>
+                    }
+                    else if (link.DisplayText == "»")
+                    {
+                        <span aria-hidden="true">&raquo;</span>
+                    }
+                    else
+                    {
+                        @link.DisplayText
+                    }
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

@@ -1,7 +1,7 @@
 ﻿@using MvcPaging;
 @using WebApplication2.Models;
 @using WebApplication2.Controllers
-@model PagedList<People>
+@model IPagedList<People>
 
 @{;
     ViewBag.Title = "Index";
@@ -14,7 +14,7 @@
     </p>
 </div>
 
-<form asp-controller="People" asp-action="SearchPeople" method="get">
+<form action="/People/SearchPeople" method="get">
     <p>
         Title: <input type="text" name="searchString" />
         <input type="submit" value="Search" />
@@ -90,5 +90,15 @@
 </table>
 
 <div class="pager">
-    @Html.Pager(Model.PageSize,Model.PageNumber, Model.TotalItemCount)
+    @Html.Pager(Model.PageSize, Model.PageNumber, Model.TotalItemCount).Options(o => o
+    .DisplayTemplate("Bootstrap5Pagination")
+    .MaxNrOfPages(2)
+    .AlwaysAddFirstPageNumber()
+    .HidePreviousAndNextPage()
+    .SetNextPageTitle("Next")
+    .SetPreviousPageTitle("Previous")
+    .SetPreviousPageText("Previous")
+    .SetNextPageText("Next")
+    )
+
 </div>
